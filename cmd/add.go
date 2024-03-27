@@ -52,7 +52,7 @@ func addBookmark(urlStr string) {
 	BookmarkFileMutex.Lock()
 	defer BookmarkFileMutex.Unlock()
 
-	file, err := os.OpenFile(bookmarksPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(getBookmarksFilePath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println("Error opening file: ", err)
     os.Exit(1)

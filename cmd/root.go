@@ -10,7 +10,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var bookmarksPath = os.Getenv("HOME") + "/.bookmarks"
+const bookmarksFile = ".bookmarks"
+
+func getBookmarksFilePath() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	return filepath.Join(home, bookmarksFile)
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

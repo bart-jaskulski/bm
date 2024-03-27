@@ -28,7 +28,7 @@ var findCmd = &cobra.Command{
 
 func findBookmarks(searchPattern string) []string {
 	var matchingBookmarks []string
-	file, err := os.Open(bookmarksPath)
+	file, err := os.Open(getBookmarksFilePath())
 	if err != nil {
 		fmt.Println("Error opening .bookmark file:", err)
 		return matchingBookmarks
