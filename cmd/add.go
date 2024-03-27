@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new bookmark",
@@ -18,12 +17,10 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var urlStr string
 		if len(args) < 1 {
-			// If no argument is provided, read from stdin
 			scanner := bufio.NewScanner(os.Stdin)
 			scanner.Scan()
 			urlStr = scanner.Text()
 		} else {
-			// If URL was passed as an argument, add it to the bookmarks
 			urlStr = args[0]
 		}
 		addBookmark(urlStr)
@@ -34,7 +31,6 @@ func init() {
 	rootCmd.AddCommand(addCmd)
 }
 
-// BookmarkFileMutex is used to ensure safe concurrent writes to the bookmark file
 var BookmarkFileMutex = &sync.Mutex{}
 
 func isValidURL(urlStr string) bool {
@@ -42,7 +38,6 @@ func isValidURL(urlStr string) bool {
   return err == nil
 }
 
-// Function to add bookmarks
 func addBookmark(urlStr string) {
   if !isValidURL(urlStr) {
     fmt.Printf("Invalid URL: %s\n", urlStr)

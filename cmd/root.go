@@ -1,11 +1,9 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -22,7 +20,6 @@ func getBookmarksFilePath() string {
 	return filepath.Join(home, bookmarksFile)
 }
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "bm",
 	Short: "bm is a CLI tool for managing bookmarks",

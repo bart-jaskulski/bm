@@ -43,10 +43,8 @@ func findBookmarks(searchPattern string) []string {
 		return matchingBookmarks
 	}
 
-	// Create a new Scanner for the file
 	scanner := bufio.NewScanner(file)
 
-	// Scan through each line in the file
 	for scanner.Scan() {
 		// If a pattern is provided, only print lines that match the pattern
 		if pattern != nil {
@@ -58,7 +56,6 @@ func findBookmarks(searchPattern string) []string {
 		}
 	}
 
-	// Check for errors during scanning
 	if err := scanner.Err(); err != nil {
 		fmt.Println("Error scanning .bookmark file:", err)
 	}
