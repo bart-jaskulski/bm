@@ -3,22 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
+	"github.com/bart-jaskulski/bm/internal/bookmarks"
 	"github.com/spf13/cobra"
 )
-
-const bookmarksFile = ".bookmarks"
-
-func getBookmarksFilePath() string {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	return filepath.Join(home, bookmarksFile)
-}
 
 var rootCmd = &cobra.Command{
 	Use:   "bm",
@@ -27,19 +15,27 @@ var rootCmd = &cobra.Command{
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			for _, bookmark := range findBookmarks("") {
+			bookmarks, err := bookmarks.FindBookmarks("")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			for _, bookmark := range bookmarks {
 				fmt.Println(bookmark)
 			}
 			return
 		}
 
-		addBookmark(args[0])
+		if err := bookmarks.AddBookmark(args[0]); err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("Bookmark added successfully")
 	},
 }
 
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }

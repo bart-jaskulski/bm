@@ -3,10 +3,9 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"net/url"
 	"os"
-	"sync"
 
+	"github.com/bart-jaskulski/bm/internal/bookmarks"
 	"github.com/spf13/cobra"
 )
 
@@ -23,43 +22,14 @@ var addCmd = &cobra.Command{
 		} else {
 			urlStr = args[0]
 		}
-		addBookmark(urlStr)
+		if err := bookmarks.AddBookmark(urlStr); err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("Bookmark added successfully")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addCmd)
-}
-
-var BookmarkFileMutex = &sync.Mutex{}
-
-func isValidURL(urlStr string) bool {
-	_, err := url.ParseRequestURI(urlStr)
-	return err == nil
-}
-
-func addBookmark(urlStr string) {
-	if !isValidURL(urlStr) {
-		fmt.Printf("Invalid URL: %s\n", urlStr)
-		return
-	}
-
-	BookmarkFileMutex.Lock()
-	defer BookmarkFileMutex.Unlock()
-
-	file, err := os.OpenFile(getBookmarksFilePath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println("Error opening file: ", err)
-		os.Exit(1)
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(urlStr + "\n")
-	if err != nil {
-		fmt.Println("Error writing to file: ", err)
-		os.Exit(1)
-		return
-	}
-
-	fmt.Println("Bookmark added successfully")
 }

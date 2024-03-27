@@ -1,0 +1,63 @@
+package bookmarks
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"regexp"
+	"sync"
+
+	"github.com/bart-jaskulski/bm/internal/utils"
+)
+
+var bookmarkFileMutex = &sync.Mutex{}
+
+func AddBookmark(urlStr string) error {
+	if !utils.IsValidURL(urlStr) {
+		return fmt.Errorf("invalid URL: %s", urlStr)
+	}
+
+	bookmarkFileMutex.Lock()
+	defer bookmarkFileMutex.Unlock()
+
+	file, err := os.OpenFile(utils.GetBookmarksFilePath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("error opening file: %v", err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(urlStr + "\n")
+	if err != nil {
+		return fmt.Errorf("error writing to file: %v", err)
+	}
+
+	return nil
+}
+
+func FindBookmarks(searchPattern string) ([]string, error) {
+	var matchingBookmarks []string
+	file, err := os.Open(utils.GetBookmarksFilePath())
+	if err != nil {
+		return nil, fmt.Errorf("error opening .bookmark file: %v", err)
+	}
+	defer file.Close()
+
+	pattern, err := regexp.Compile(searchPattern)
+	if err != nil {
+		return nil, fmt.Errorf("invalid regex pattern: %v", err)
+	}
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		if pattern.MatchString(scanner.Text()) {
+			matchingBookmarks = append(matchingBookmarks, scanner.Text())
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error scanning .bookmark file: %v", err)
+	}
+
+	return matchingBookmarks, nil
+}
