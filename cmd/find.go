@@ -11,18 +11,16 @@ import (
 
 var findCmd = &cobra.Command{
 	Use:   "find",
-	Short: "Find bookmarks based on a regex pattern",
-	Long:  `Find bookmarks based on a regex pattern. If no pattern is provided, all bookmarks are listed.`,
+	Short: "Search for bookmarks containing the given pattern",
 	Run: func(cmd *cobra.Command, args []string) {
-    var searchPattern string
-    if ( len(args) > 0 ) {
-      searchPattern = args[0]
-    } else {
-      searchPattern = ""
-    }
-    for _, bookmark := range findBookmarks(searchPattern) {
-      fmt.Println(bookmark)
-    }
+		searchPattern := ""
+		if len(args) > 0 {
+			searchPattern = args[0]
+		}
+
+		for _, bookmark := range findBookmarks(searchPattern) {
+			fmt.Println(bookmark)
+		}
 	},
 }
 
@@ -35,9 +33,7 @@ func findBookmarks(searchPattern string) []string {
 	}
 	defer file.Close()
 
-	// If a pattern is provided, compile it into a regex
-	var pattern *regexp.Regexp
-	pattern, err = regexp.Compile(searchPattern)
+	pattern, err := regexp.Compile(searchPattern)
 	if err != nil {
 		fmt.Println("Invalid regex pattern:", err)
 		return matchingBookmarks
@@ -46,12 +42,7 @@ func findBookmarks(searchPattern string) []string {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		// If a pattern is provided, only print lines that match the pattern
-		if pattern != nil {
-			if pattern.MatchString(scanner.Text()) {
-				matchingBookmarks = append(matchingBookmarks, scanner.Text())
-			}
-		} else {
+		if pattern.MatchString(scanner.Text()) {
 			matchingBookmarks = append(matchingBookmarks, scanner.Text())
 		}
 	}

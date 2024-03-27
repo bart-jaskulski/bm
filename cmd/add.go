@@ -34,15 +34,15 @@ func init() {
 var BookmarkFileMutex = &sync.Mutex{}
 
 func isValidURL(urlStr string) bool {
-  _, err := url.ParseRequestURI(urlStr)
-  return err == nil
+	_, err := url.ParseRequestURI(urlStr)
+	return err == nil
 }
 
 func addBookmark(urlStr string) {
-  if !isValidURL(urlStr) {
-    fmt.Printf("Invalid URL: %s\n", urlStr)
-    return
-  }
+	if !isValidURL(urlStr) {
+		fmt.Printf("Invalid URL: %s\n", urlStr)
+		return
+	}
 
 	BookmarkFileMutex.Lock()
 	defer BookmarkFileMutex.Unlock()
@@ -50,15 +50,14 @@ func addBookmark(urlStr string) {
 	file, err := os.OpenFile(getBookmarksFilePath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println("Error opening file: ", err)
-    os.Exit(1)
-		return
+		os.Exit(1)
 	}
 	defer file.Close()
 
 	_, err = file.WriteString(urlStr + "\n")
 	if err != nil {
 		fmt.Println("Error writing to file: ", err)
-    os.Exit(1)
+		os.Exit(1)
 		return
 	}
 

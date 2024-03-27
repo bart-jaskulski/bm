@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
-  "strings"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
