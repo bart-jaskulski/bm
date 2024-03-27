@@ -14,7 +14,13 @@ var findCmd = &cobra.Command{
 	Short: "Find bookmarks based on a regex pattern",
 	Long:  `Find bookmarks based on a regex pattern. If no pattern is provided, all bookmarks are listed.`,
 	Run: func(cmd *cobra.Command, args []string) {
-    for _, bookmark := range findBookmarks(args[0]) {
+    var searchPattern string
+    if ( len(args) > 0 ) {
+      searchPattern = args[0]
+    } else {
+      searchPattern = ""
+    }
+    for _, bookmark := range findBookmarks(searchPattern) {
       fmt.Println(bookmark)
     }
 	},
