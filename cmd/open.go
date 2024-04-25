@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/bart-jaskulski/bm/internal/bookmarks"
@@ -29,8 +30,16 @@ var openCmd = &cobra.Command{
 
 		url = strings.Split(bookmark, " ")[0]
 
-		// Open URL in the default browser
-		err := exec.Command("open", url).Run()
+		var openCmd *exec.Cmd
+		switch runtime.GOOS {
+		case "darwin":
+			openCmd = exec.Command("open", url)
+		case "windows":
+			openCmd = exec.Command("cmd", "/c", "start", url)
+		default: // Assume Linux
+			openCmd = exec.Command("xdg-open", url)
+		}
+		err := openCmd.Run()
 		if err != nil {
 			return fmt.Errorf("failed to open URL: %v", err)
 		}
