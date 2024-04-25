@@ -3,11 +3,14 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 const bookmarksFile = ".bookmarks"
@@ -49,4 +52,44 @@ func ChooseBookmark(bookmarks []string) string {
 	}
 
 	return bookmarks[index]
+}
+
+func FetchTitleFromURL(urlStr string) (string, error) {
+	resp, err := http.Get(urlStr)
+	if err != nil {
+		return "", fmt.Errorf("error fetching URL: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("HTTP error status: %s", resp.Status)
+	}
+
+	doc, err := html.Parse(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error parsing HTML: %v", err)
+	}
+
+	var title string
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "head" {
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				if c.Type == html.ElementNode && c.Data == "title" && c.FirstChild != nil {
+					title = c.FirstChild.Data
+					return
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+
+	if title == "" {
+		return "", fmt.Errorf("no title found in HTML")
+	}
+
+	return title, nil
 }

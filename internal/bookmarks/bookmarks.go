@@ -17,6 +17,12 @@ func AddBookmark(urlStr string) error {
 		return fmt.Errorf("invalid URL: %s", urlStr)
 	}
 
+	// Fetch the title from the URL
+	title, err := utils.FetchTitleFromURL(urlStr)
+	if err != nil {
+		return fmt.Errorf("error fetching title from URL: %v", err)
+	}
+
 	bookmarkFileMutex.Lock()
 	defer bookmarkFileMutex.Unlock()
 
@@ -26,7 +32,8 @@ func AddBookmark(urlStr string) error {
 	}
 	defer file.Close()
 
-	_, err = file.WriteString(urlStr + "\n")
+	bookmarkEntry := fmt.Sprintf("%s \"%s\"\n", urlStr, title)
+	_, err = file.WriteString(bookmarkEntry)
 	if err != nil {
 		return fmt.Errorf("error writing to file: %v", err)
 	}
