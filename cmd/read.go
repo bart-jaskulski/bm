@@ -12,10 +12,11 @@ import (
 )
 
 var readCmd = &cobra.Command{
-	Use:   "read",
-	Short: "Read a bookmark",
-	Long:  `This command reads a bookmark and passes the URL to the 'rdr' command.`,
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "read",
+	Aliases: []string{"r"},
+	Short:   "Read a bookmark",
+	Long:    `This command reads a bookmark and passes the URL to the 'rdr' command.`,
+	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var bookmark string
 		if len(args) > 0 {

@@ -8,9 +8,10 @@ import (
 )
 
 var findCmd = &cobra.Command{
-	Use:   "find",
-	Short: "Search for bookmarks containing the given pattern",
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "find",
+	Aliases: []string{"f"},
+	Short:   "Search for bookmarks containing the given pattern",
+	Args:    cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		searchPattern := ""
 		if len(args) > 0 {
