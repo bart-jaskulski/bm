@@ -24,21 +24,11 @@ var readCmd = &cobra.Command{
 		}
 
 		if !utils.IsValidURL(bookmark) {
-			matches, err := bookmarks.FindBookmarks(bookmark)
+			chosenBookmark, err := bookmarks.SearchAndChooseBookmark(bookmark)
 			if err != nil {
 				return err
 			}
-
-			if len(matches) == 0 {
-				return errors.New("no bookmarks found")
-			} else if len(matches) > 1 {
-				bookmark = utils.ChooseBookmark(matches)
-				if bookmark == "" {
-					return errors.New("no bookmark chosen")
-				}
-			} else {
-				bookmark = matches[0]
-			}
+			bookmark = chosenBookmark
 		}
 
 		if _, err := exec.LookPath("rdr"); err != nil {

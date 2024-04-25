@@ -68,3 +68,20 @@ func FindBookmarks(searchPattern string) ([]string, error) {
 
 	return matchingBookmarks, nil
 }
+
+func SearchAndChooseBookmark(searchTerm string) (string, error) {
+	matches, err := FindBookmarks(searchTerm)
+	if err != nil {
+		return "", err
+	}
+	if len(matches) == 0 {
+		return "", fmt.Errorf("no bookmarks found")
+	} else if len(matches) > 1 {
+		chosenBookmark := utils.ChooseBookmark(matches)
+		if chosenBookmark == "" {
+			return "", fmt.Errorf("no bookmark chosen")
+		}
+		return chosenBookmark, nil
+	}
+	return matches[0], nil
+}
