@@ -49,7 +49,7 @@ func FindBookmarks(searchPattern string) ([]string, error) {
 	}
 	defer file.Close()
 
-	pattern, err := regexp.Compile(searchPattern)
+	pattern, err := regexp.Compile(`(?i)` + searchPattern)
 	if err != nil {
 		return nil, fmt.Errorf("invalid regex pattern: %v", err)
 	}
